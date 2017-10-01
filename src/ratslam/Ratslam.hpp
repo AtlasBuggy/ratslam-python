@@ -193,9 +193,9 @@ private:
 	std::ofstream log;
 
 
-  	Ratslam() { ;}
-  Ratslam(const Ratslam & other);
-  const Ratslam & operator=(const Ratslam & other);
+  // 	Ratslam() { ;}
+  // Ratslam(const Ratslam & other);
+  // const Ratslam & operator=(const Ratslam & other);
 };
 
 

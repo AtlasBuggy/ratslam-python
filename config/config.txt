@@ -11,9 +11,9 @@ ros_master_uri=http://192.168.1.2:11311
 ros_ip=192.168.1.45
 ros_hostname=192.168.1.45
 reset_ratslam=20000
-                                                              	
+
 [tracking]
-debug=0
+debug=1
 log_tracking=tracking_log.csv
 robot_min_pix=300
 robot_max_pix=800
@@ -61,6 +61,7 @@ mode=goal
 debug=1
 
 [ratslam]
+debug=1
 #log_vt = vt_log.csv
 #log_views = view_log.csv
 pc_dim_xy = 15
@@ -80,10 +81,12 @@ log=ratslam
 patch_normalise=2
 
 [manual_control]
+debug=1
 max_trans_vel_ms = 0.1
 max_rot_vel_rads = 1.0
 
 [draw]
+debug=1
 enable=1
 width=780
 height=460
@@ -94,6 +97,7 @@ media_path=/home/scott/ros/irat/ratslam/src/media
 final_image=final_image.png
 
 [dock]
+debug=1
 battery_threshold=7.0
 inner_width=15.0
 outer_width=75.0

@@ -95,10 +95,10 @@ typedef struct td_experience
 	double x_m, y_m, th_rad;
     double x_pc, y_pc, th_pc;
     int vt_id;
-    
+
 	std::vector<unsigned int> links_from;		// links from this experience
 	std::vector<unsigned int> links_to;		// links to this experience
-	
+
 	bool dock_visible;
 
 	// goal navigation
@@ -131,7 +131,7 @@ public:
 	Experience_Map(ptree settings);
 	~Experience_Map();
 
-	// create a new experience for a given position 
+	// create a new experience for a given position
 	int create_experience(double x, double y, double th, double delta_time_s);
 	bool create_link(int exp_id_from, int exp_id_to, double delta_time_s);
 
@@ -144,7 +144,7 @@ public:
 
 	// update the map by relaxing the graph
 	bool iterate();
-	
+
 	// change the current experience
 	int set_current_id(int new_exp_id);
 
@@ -190,7 +190,7 @@ public:
 	ar & experiences;
 	ar & links;
 	ar & goal_list;
-  
+
     ar & current_exp_id & prev_exp_id;
 
     ar & accum_delta_facing;
@@ -218,7 +218,7 @@ private:
 	std::vector<Experience> experiences;
 	std::vector<Link> links;
 	std::deque<int> goal_list;
-  
+
     int current_exp_id, prev_exp_id;
 
     double accum_delta_facing;
