@@ -23,7 +23,6 @@ void PyRatslam::set_view_rgb(object view_rgb) {
         const unsigned char *p = (unsigned char *)buf;
         PyBuffer_Release(&pybuf);
 
-        std::cout << p << std::endl;
         rat_slam_instance->set_view_rgb(p);
     }
 }
@@ -80,7 +79,6 @@ void PyRatslam::clear_goal_list() {
 }
 
 object PyRatslam::get_current_goal_id() {
-    std::cout << EXP_MAP->get_current_goal_id() << std::endl;
     return object(EXP_MAP->get_current_goal_id());
 }
 
