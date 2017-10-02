@@ -14,7 +14,7 @@ reset_ratslam=20000
 
 [tracking]
 debug=1
-log_tracking=tracking_log.csv
+log_tracking="log_tracking.csv"
 robot_min_pix=300
 robot_max_pix=800
 robot_search_size=25
@@ -77,7 +77,7 @@ vt_active_decay = 1.0
 template_x_size=40
 template_y_size=20
 exp_loops=5
-log=ratslam
+log=  # disable logging
 patch_normalise=2
 
 [manual_control]
