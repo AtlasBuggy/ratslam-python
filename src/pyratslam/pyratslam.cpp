@@ -18,9 +18,8 @@
 // #include "RatslamWrapper.hpp"
 // #include "ExperienceStructWrapper.hpp"
 
-#include "ExperienceMapWrapper.cpp"
-#include "RatslamWrapper.cpp"
 #include "ExperienceStructWrapper.cpp"
+#include "RatslamWrapper.cpp"
 
 using namespace boost::python;
 using namespace boost::property_tree;
@@ -35,24 +34,19 @@ BOOST_PYTHON_MODULE(pyratslam)
         .def("set_delta_time", &PyRatslam::set_delta_time)
         .def("process", &PyRatslam::process)
 
-        .def("get_experience_map", &PyRatslam::get_experience_map)
-    ;
+        .def("get_experience", &PyRatslam::get_experience)
+        .def("get_num_experiences", &PyRatslam::get_num_experiences)
+        .def("get_current_id", &PyRatslam::get_current_id)
 
-    class_<PyExperienceMap>("ExperienceMap", init<Experience_Map>())   // experience map wrapper
-        .def("get_experience", &PyExperienceMap::get_experience)
-        .def("get_num_experiences", &PyExperienceMap::get_num_experiences)
-        .def("get_current_id", &PyExperienceMap::get_current_id)
-
-        .def("add_goal", &PyExperienceMap::add_goal)
-        .def("calculate_path_to_goal", &PyExperienceMap::calculate_path_to_goal)
-        .def("get_goal_waypoint", &PyExperienceMap::get_goal_waypoint)
-        .def("clear_goal_list", &PyExperienceMap::clear_goal_list)
-        .def("get_current_goal_id", &PyExperienceMap::get_current_goal_id)
-        .def("delete_current_goal", &PyExperienceMap::delete_current_goal)
-        .def("get_goal_success", &PyExperienceMap::get_goal_success)
-        .def("get_subgoal_m", &PyExperienceMap::get_subgoal_m)
-        .def("get_subgoal_rad", &PyExperienceMap::get_subgoal_rad)
-        .def("get_goals", &PyExperienceMap::get_goals)
+        .def("add_goal", &PyRatslam::add_goal)
+        .def("calculate_path_to_goal", &PyRatslam::calculate_path_to_goal)
+        .def("get_goal_waypoint", &PyRatslam::get_goal_waypoint)
+        .def("clear_goal_list", &PyRatslam::clear_goal_list)
+        .def("get_current_goal_id", &PyRatslam::get_current_goal_id)
+        .def("delete_current_goal", &PyRatslam::delete_current_goal)
+        .def("get_goal_success", &PyRatslam::get_goal_success)
+        .def("get_subgoal_m", &PyRatslam::get_subgoal_m)
+        .def("get_subgoal_rad", &PyRatslam::get_subgoal_rad)
     ;
 
     class_<Experience>("ExperienceStruct");  // the Ratslam Experience struct

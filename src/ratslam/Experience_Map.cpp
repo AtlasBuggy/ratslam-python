@@ -34,7 +34,7 @@ namespace ratslam
 
 
 Experience_Map::Experience_Map(ptree settings)
-{  
+{
 	gri::get_setting_from_ptree(EXP_CORRECTION, settings, "exp_correction", 0.5);
 	gri::get_setting_from_ptree(EXP_LOOPS, settings, "exp_loops", 10);
 	gri::get_setting_from_ptree(MAX_GOALS, settings, "max_goals", (unsigned int) 10);
@@ -61,7 +61,7 @@ Experience_Map::~Experience_Map()
 	experiences.clear();
 }
 
-// create a new experience for a given position 
+// create a new experience for a given position
 int Experience_Map::create_experience(double x, double y, double th, double delta_time_s)
 {
 	experiences.resize(experiences.size()+1);
@@ -129,7 +129,7 @@ bool Experience_Map::iterate()
 				//%             //% work out where e0 thinks e1 (x,y) should be based on the stored
 				//%             //% link information
 				lx = link_from->x_m + link->d * cos(link_from->th_rad + link->heading_rad);
-				ly = link_from->y_m + link->d * sin(link_from->th_rad + link->heading_rad);                
+				ly = link_from->y_m + link->d * sin(link_from->th_rad + link->heading_rad);
 
 				//%             //% correct e0 and e1 (x,y) by equal but opposite amounts
 				//%             //% a 0.5 correction parameter means that e0 and e1 will be fully
@@ -145,11 +145,11 @@ bool Experience_Map::iterate()
 
 				//%             //% correct e0 and e1 facing by equal but opposite amounts
 				//%             //% a 0.5 correction parameter means that e0 and e1 will be fully
-				//%             //% corrected based on e0's link information           
+				//%             //% corrected based on e0's link information
 				link_from->th_rad = gri::clip_rad_180(link_from->th_rad + df * EXP_CORRECTION);
 				link_to->th_rad = gri::clip_rad_180(link_to->th_rad - df * EXP_CORRECTION);
 			}
-		}  
+		}
 	}
 
 	return true;
@@ -290,7 +290,7 @@ bool Experience_Map::calculate_path_to_goal(double time_s)
 	// check if we are within thres of the goal or timeout
 	if (exp_euclidean_m(&experiences[current_exp_id], &experiences[goal_list[0]]) < 0.1
 		 || ((goal_timeout_s != 0) && time_s > goal_timeout_s))
-	{	
+	{
 		if (goal_timeout_s != 0 && time_s > goal_timeout_s)
 		{
 			cout << "Timed out reaching goal ... sigh" << endl;
@@ -319,7 +319,7 @@ bool Experience_Map::calculate_path_to_goal(double time_s)
 		double link_time_s;
 
 		std::priority_queue<Experience*, std::vector<Experience*>, compare> exp_heap;
-			
+
 		for (id = 0; id < experiences.size(); id++)
 		{
 			experiences[id].time_from_current_s = DBL_MAX;
@@ -352,7 +352,7 @@ bool Experience_Map::calculate_path_to_goal(double time_s)
 					experiences[link->exp_from_id].goal_to_current = exp->id;
 				}
 			}
-		
+
 			for (id = 0; id < exp->links_from.size(); id++)
 			{
 				Link *link = &links[exp->links_from[id]];
@@ -415,12 +415,12 @@ bool Experience_Map::get_goal_waypoint()
 
 	if (waypoint_exp_id == -1)
 		waypoint_exp_id = current_exp_id;
-	
+
 	return true;
 }
 
 void Experience_Map::add_goal(double x_m, double y_m)
-{	
+{
 	int min_id = -1;
 	double min_dist = DBL_MAX;
 	double dist;
@@ -445,13 +445,13 @@ void Experience_Map::add_goal(double x_m, double y_m)
 }
 
 double Experience_Map::get_subgoal_m() const
-{ 
+{
 	return (waypoint_exp_id == -1 ? 0 : sqrt( (double) pow((experiences[waypoint_exp_id].x_m - experiences[current_exp_id].x_m), 2) +
 				   (double)	pow((experiences[waypoint_exp_id].y_m - experiences[current_exp_id].y_m), 2)));
 }
 
 double Experience_Map::get_subgoal_rad() const
-{ 
+{
 //	if (waypoint_exp_id != -1)
 //		cout << "curr (" <<experiences[current_exp_id].x_m << "," << experiences[current_exp_id].y_m<< ") way (" << experiences[waypoint_exp_id].x_m<< "," <<experiences[waypoint_exp_id].y_m << ")" << endl;
 
@@ -489,5 +489,3 @@ void Experience_Map::goto_dock()
 }
 
 } // namespace ratslam
-
-

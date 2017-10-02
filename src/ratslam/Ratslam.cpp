@@ -37,8 +37,8 @@ using namespace gri;
 
 #include <vector>
 
-#include <boost/date_time/posix_time/posix_time.hpp> 
-#include <boost/date_time/gregorian/gregorian.hpp> 
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/date_time/gregorian/gregorian.hpp>
 
 using namespace std;
 
@@ -61,7 +61,7 @@ namespace ratslam
 	templates = new Visual_Template_Match(settings);
 	network = new Pose_Cell_Network(settings);
 	map = new Experience_Map(settings);
-	
+
 	// create an initial experience in the map
 	map->create_experience(network->x(), network->y(), network->th(), time_diff);
 
@@ -77,10 +77,10 @@ void   Ratslam::open_log_file()
 {
 	if (!log_filename.empty())
 	{
-		 boost::posix_time::ptime pt = boost::posix_time::second_clock::local_time(); 
+		 boost::posix_time::ptime pt = boost::posix_time::second_clock::local_time();
 		log.open((log_filename + to_iso_string(pt)+".csv").c_str());
 		log << "frame, time_s, vt_id, exp_id, num_vt, num_exp, goal_id, goal_success, trans_m, is_docked" << endl;
-	}	
+	}
 }
 
  Ratslam::~Ratslam()
@@ -88,15 +88,15 @@ void   Ratslam::open_log_file()
 
 	if (log.is_open())
 		log.close();
-	
+
 	delete templates;
 	delete network;
 	delete map;
 }
 
-void   Ratslam::set_view_rgb(const unsigned char * view_rgb) 
-{ 
-	templates->set_view_rgb(view_rgb); 
+void   Ratslam::set_view_rgb(const unsigned char * view_rgb)
+{
+	templates->set_view_rgb(view_rgb);
 }
 
 void   Ratslam::process()
@@ -108,7 +108,6 @@ void   Ratslam::process()
 	// diff = current_time - last_time;
 	vtrans = vtrans * time_diff;
 	vrot = vrot * time_diff;
-
 
 	/*
 	** visual template matching
@@ -123,7 +122,7 @@ void   Ratslam::process()
 	if (vt_error <= templates->get_vt_match_threshold())
 	{
 		templates->set_current_vt((int) vt_match_id);
-		
+
 		if (debug_level > 0)
 			cout << "VTM[" << setw(4) << templates->get_current_vt() << "] ";
 
@@ -151,14 +150,14 @@ void   Ratslam::process()
 	profile_RS_VT.stop();
 
 	gri::profiler profile_RS_PC("ratslam PC");
-	/* 
+	/*
 	** pose cell iteration
 	*/
 	network->excite();
 	network->inhibit();
 	network->global_inhibit();
 	network->normalise();
-	// todo: the pc network should really know how to convert vtrans ... do this by telling it the distance between posecells 
+	// todo: the pc network should really know how to convert vtrans ... do this by telling it the distance between posecells
 	network->path_integration(vtrans*POSECELL_VTRANS_SCALING, vrot);
 	network->find_best();
 	if (debug_level > 0)
@@ -188,7 +187,7 @@ void   Ratslam::process()
 		if (debug_level > 0)
 			cout << "EXPV[" << setw(3) << map->get_current_id() << "] ";
 	}
-	else if (delta_pc > EXP_DELTA_PC_THRESHOLD || templates->get_current_vt() != prev_vt) 
+	else if (delta_pc > EXP_DELTA_PC_THRESHOLD || templates->get_current_vt() != prev_vt)
 	{
 		// go through all the exps associated with the current view and find the one with the closest delta_pc
 
@@ -266,7 +265,7 @@ void   Ratslam::do_log()
 {
 	if (log.is_open())
 	{
-		
+
 //		log << "frame, time_s, vt_id, exp_id, num_vt, num_exp, goal_id, goal_success, trans_m" << endl;
 		log << frame_count << "," << time_s << "," << templates->get_current_vt() << "," << map->get_current_id() << ","
 			<< templates->get_number_of() << "," << map->get_num_experiences() << "," << map->get_current_goal_id() << "," << map->get_goal_success() << ","
@@ -275,9 +274,9 @@ void   Ratslam::do_log()
 
 }
 
-void  Ratslam::set_kidnapped() 
-{ 
-	get_experience_map()->set_kidnapped(); 
+void  Ratslam::set_kidnapped()
+{
+	get_experience_map()->set_kidnapped();
 }
 
 }
