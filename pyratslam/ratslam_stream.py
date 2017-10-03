@@ -1,3 +1,4 @@
+import cv2
 import time
 from pyratslam import Ratslam
 from atlasbuggy import ThreadedStream
@@ -53,7 +54,8 @@ class RatslamStream(ThreadedStream):
             if not self.capture_feed.empty():
                 frame = self.capture_feed.get()
                 self.capture_time = self.capture.timestamp
-                self.rat.set_view_rgb(frame)
+                gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+                self.rat.set_view_rgb(cv2.merge((gray, gray, gray)))
                 self.capture_set = True
 
             if self.is_subscribed(self.odom_tag) and not self.odom_feed.empty():
@@ -66,14 +68,22 @@ class RatslamStream(ThreadedStream):
 
             if self.capture_set:
                 if not self.is_subscribed(self.odom_tag) or self.odom_set:
-                    self.rat.set_delta_time(self.timestamp - self.capture_time)
+                    # dt = self.timestamp - self.capture_time
+                    dt = 1 / self.capture.fps
+                    self.rat.set_delta_time(dt)
                     self.rat.process()
 
                     self.capture_set = False
                     self.odom_set = False
 
-            current = self.rat.get_experience(self.rat.get_current_id())
-            print("id: %s, num exp: %s, x: %s, y: %s, th: %s" % (
-                self.rat.get_current_id(), self.rat.get_num_experiences(),
-                current.x_m(), current.y_m(), current.th_rad()))
+            # for index in range(self.rat.get_num_experiences()):
+            #     exp = self.rat.get_experience(self.rat.get_current_id())
+            #     print("%0.4f, %0.4f" % (exp.x_m(), exp.y_m()))
+
+            # current = self.rat.get_experience(self.rat.get_current_id())
+            # print("id: %s, num exp: %s, x: %s, y: %s, th: %s" % (
+            #     self.rat.get_current_id(), self.rat.get_num_experiences(),
+            #     current.x_m(), current.y_m(), current.th_rad()))
+            # print("links_from:", tuple(current.links_from()))
+            # print("links_to:", tuple(current.links_to()))
             time.sleep(1 / self.capture.fps)

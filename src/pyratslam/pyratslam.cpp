@@ -4,6 +4,7 @@
 #include <sstream>
 
 #include <boost/python.hpp>
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
 // ratslam headers
 #include <Ratslam.hpp>
@@ -18,7 +19,9 @@
 // #include "RatslamWrapper.hpp"
 // #include "ExperienceStructWrapper.hpp"
 
-#include "ExperienceStructWrapper.cpp"
+typedef std::vector<unsigned int> IntVector;
+
+#include "PyExperience.cpp"
 #include "RatslamWrapper.cpp"
 
 using namespace boost::python;
@@ -26,8 +29,12 @@ using namespace boost::property_tree;
 using namespace ratslam;
 
 
+
 BOOST_PYTHON_MODULE(pyratslam)
 {
+    class_<IntVector>("IntVector")
+        .def(vector_indexing_suite<IntVector>() );
+
     class_<PyRatslam>("Ratslam", init<std::string>())
         .def("set_view_rgb", &PyRatslam::set_view_rgb)
         .def("set_odom", &PyRatslam::set_odom)

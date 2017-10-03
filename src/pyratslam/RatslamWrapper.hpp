@@ -20,7 +20,7 @@ public:
     void process();
 
     object get_num_experiences();
-    PyExperience get_experience(int id);
+    PyExperience get_experience(object id);
     object get_current_id();
 
     void add_goal(object x_m, object y_m);

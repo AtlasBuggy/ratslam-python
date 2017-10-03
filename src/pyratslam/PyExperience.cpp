@@ -17,10 +17,12 @@ public:
     object x_pc();
     object y_pc();
     object th_pc();
-    tuple links_from();
-    tuple links_to();
+    IntVector links_from();
+    IntVector links_to();
 private:
     Experience *exp;
+    IntVector links_from_inst;
+    IntVector links_to_inst;
 };
 
 PyExperience::PyExperience(Experience exp)
@@ -56,18 +58,22 @@ object PyExperience::th_pc() {
     return object(exp->th_pc);
 }
 
-tuple PyExperience::links_from()
+IntVector PyExperience::links_from()
 {
-    object get_iter = iterator<std::vector<int> >();
-    object iter = get_iter(exp->links_from);
-    tuple t(iter);
-    return t;
+    // object get_iter = iterator<std::vector<int> >();
+    // object iter = get_iter(exp->links_from);
+    // tuple t(iter);
+    // return t;
+    links_from_inst = IntVector(exp->links_from);
+    return links_from_inst;
 }
 
-tuple PyExperience::links_to()
+IntVector PyExperience::links_to()
 {
-    object get_iter = iterator<std::vector<int> >();
-    object iter = get_iter(exp->links_to);
-    tuple t(iter);
-    return t;
+    // object get_iter = iterator<std::vector<int> >();
+    // object iter = get_iter(exp->links_to);
+    // tuple t(iter);
+    // return t;
+    links_to_inst = IntVector(exp->links_to);
+    return links_to_inst;
 }

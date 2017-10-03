@@ -1,6 +1,6 @@
 
 [ratslam]
-debug=0
+debug=1
 pc_dim_xy = 15
 exp_delta_pc_threshold = 2
 vt_shift_match = 0

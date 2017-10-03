@@ -44,9 +44,10 @@ void PyRatslam::process()
     rat_slam_instance->process();
 }
 
-PyExperience PyRatslam::get_experience(int id)
+PyExperience PyRatslam::get_experience(object id)
 {
-    PyExperience exp(*(EXP_MAP->get_experience(id)));
+    int prim_id = extract<int>(id);
+    PyExperience exp(*(EXP_MAP->get_experience(prim_id)));
     return exp;
 }
 

@@ -221,7 +221,7 @@ void   Ratslam::process()
 		{
 			if (matched_exp_id == -1)
 			{
-				  new_exp = map->create_experience(network->x(), network->y(), network->th(), time_diff);
+				new_exp = map->create_experience(network->x(), network->y(), network->th(), time_diff);
 					map->set_current_id(new_exp);
 				if (debug_level > 0)
 					cout << "EXPD[" << setw(3) << map->get_current_id() << "] ";
