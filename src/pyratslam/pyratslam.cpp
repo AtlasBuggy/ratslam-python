@@ -1,74 +1,69 @@
-#include <string>
-#include <iostream>
-#include <fstream>
-#include <sstream>
-
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
-// ratslam headers
-#include <Ratslam.hpp>
-#include <gri_util.h>
+#include "ptree_wrapper.cpp"
+#include "local_view_match_wrapper.cpp"
+#include "visual_odometry_wrapper.cpp"
+#include "posecell_network_wrapper.cpp"
+#include "experience_map_wrapper.cpp"
 
-// boost property trees
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/ini_parser.hpp>
+#include <posecell_network.h>
 
-// Boost wrappers
-// #include "ExperienceMapWrapper.hpp"
-// #include "RatslamWrapper.hpp"
-// #include "ExperienceStructWrapper.hpp"
-
-typedef std::vector<unsigned int> IntVector;
-
-#include "PyExperience.cpp"
-#include "RatslamWrapper.cpp"
-
-using namespace boost::python;
-using namespace boost::property_tree;
+namespace py = boost::python;
 using namespace ratslam;
 
+void ptree_bad_path_translator(const boost::property_tree::ptree_bad_path& exception) {
+    PyErr_SetString(PyExc_UserWarning, exception.what());
+}
 
 
 BOOST_PYTHON_MODULE(pyratslam)
 {
-    class_<IntVector>("IntVector")
-        .def(vector_indexing_suite<IntVector>() );
+    py::register_exception_translator<boost::property_tree::ptree_bad_path>(&ptree_bad_path_translator);
 
-    class_<PyRatslam>("Ratslam", init<std::string>())
-        .def("set_view_rgb", &PyRatslam::set_view_rgb)
-        .def("set_odom", &PyRatslam::set_odom)
-        .def("set_delta_time", &PyRatslam::set_delta_time)
-        .def("process", &PyRatslam::process)
-
-        .def("get_experience", &PyRatslam::get_experience)
-        .def("get_num_experiences", &PyRatslam::get_num_experiences)
-        .def("get_current_id", &PyRatslam::get_current_id)
-
-        .def("add_goal", &PyRatslam::add_goal)
-        .def("calculate_path_to_goal", &PyRatslam::calculate_path_to_goal)
-        .def("get_goal_waypoint", &PyRatslam::get_goal_waypoint)
-        .def("clear_goal_list", &PyRatslam::clear_goal_list)
-        .def("get_current_goal_id", &PyRatslam::get_current_goal_id)
-        .def("delete_current_goal", &PyRatslam::delete_current_goal)
-        .def("get_goal_success", &PyRatslam::get_goal_success)
-        .def("get_subgoal_m", &PyRatslam::get_subgoal_m)
-        .def("get_subgoal_rad", &PyRatslam::get_subgoal_rad)
+    py::class_<PtreeWrapper>("Ptree", py::init<std::string>())
+        .def("get_child", &PtreeWrapper::get_child)
+        .def("get", &PtreeWrapper::get)
     ;
 
-    class_<Experience>("ExperienceStruct");  // the Ratslam Experience struct
-    class_<PyExperience>("Experience", init<Experience>())   // my struct wrapper
-        .def("id", &PyExperience::id)
+    py::class_<LocalViewMatchWrapper>("LocalViewMatch", py::init<PtreeWrapper>())
+        .def("on_image", &LocalViewMatchWrapper::on_image)
+        .def("get_current_vt", &LocalViewMatchWrapper::get_current_vt)
+        .def("get_relative_rad", &LocalViewMatchWrapper::get_relative_rad)
+    ;
 
-        .def("x_m", &PyExperience::x_m)
-        .def("y_m", &PyExperience::y_m)
-        .def("th_rad", &PyExperience::th_rad)
+    py::class_<VisualOdometryWrapper>("VisualOdometry", py::init<PtreeWrapper>())
+        .def("on_image", &VisualOdometryWrapper::on_image)
+    ;
 
-        .def("x_pc", &PyExperience::x_pc)
-        .def("y_pc", &PyExperience::y_pc)
-        .def("th_pc", &PyExperience::th_pc)
+    py::class_<PosecellNetworkWrapper>("PosecellNetwork", py::init<PtreeWrapper>())
+        .def("on_view_template", &PosecellNetworkWrapper::on_view_template)
+        .def("on_odo", &PosecellNetworkWrapper::on_odo)
+        .def("get_current_exp_id", &PosecellNetworkWrapper::get_current_exp_id)
+        .def("get_relative_rad", &PosecellNetworkWrapper::get_relative_rad)
+        .def("x", &PosecellNetworkWrapper::x)
+        .def("y", &PosecellNetworkWrapper::y)
+        .def("th", &PosecellNetworkWrapper::th)
+        .def("get_action", &PosecellNetworkWrapper::get_action)
+    ;
 
-        .def("links_from", &PyExperience::links_from)
-        .def("links_to", &PyExperience::links_to)
+    py::enum_<PosecellNetwork::PosecellAction>("PosecellAction")
+        .value("NO_ACTION", PosecellNetwork::NO_ACTION)
+        .value("CREATE_NODE", PosecellNetwork::CREATE_NODE)
+        .value("CREATE_EDGE", PosecellNetwork::CREATE_EDGE)
+        .value("SET_NODE", PosecellNetwork::SET_NODE)
+    ;
+
+    py::class_<ExperienceMapWrapper>("ExperienceMap", py::init<PtreeWrapper>())
+        .def("set_goal", &ExperienceMapWrapper::set_goal)
+        .def("on_odo", &ExperienceMapWrapper::on_odo)
+        .def("on_set_experience", &ExperienceMapWrapper::on_set_experience)
+        .def("on_create_experience", &ExperienceMapWrapper::on_create_experience)
+        .def("on_create_link", &ExperienceMapWrapper::on_create_link)
+        .def("iterate", &ExperienceMapWrapper::iterate)
+        .def("get_experience_x_m", &ExperienceMapWrapper::get_experience_x_m)
+        .def("get_experience_y_m", &ExperienceMapWrapper::get_experience_y_m)
+        .def("get_experience_th_rad", &ExperienceMapWrapper::get_experience_th_rad)
+        .def("get_current_id", &ExperienceMapWrapper::get_current_id)
     ;
 }

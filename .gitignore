@@ -125,6 +125,7 @@ xcuserdata/
 .swp
 \#*
 
-# Build #
-#########
-build/
+# Large files #
+###############
+*.mp4
+*.avi
