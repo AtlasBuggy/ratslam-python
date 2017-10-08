@@ -1,5 +1,6 @@
 from atlasbuggy import ThreadedStream
-from atlasbuggy.subscriptions import Update
+from atlasbuggy.subscriptions import *
+from atlasbuggy.plotters import RobotPlot
 
 from .pyratslam import Ptree, LocalViewMatch, VisualOdometry, PosecellNetwork, ExperienceMap, PosecellAction
 
@@ -23,6 +24,12 @@ class Ratslam(ThreadedStream):
         self.destination_id = None
         self.relative_rad = None
 
+        self.trajectory_plot = RobotPlot("trajectory")
+
+        self.plotter_tag = "plotter"
+        self.plotter = None
+        self.require_subscription(self.plotter, Subscription, is_suggestion=True)
+
         self.capture = None
         self.capture_feed = None
         self.capture_tag = "capture"
@@ -31,6 +38,9 @@ class Ratslam(ThreadedStream):
     def take(self, subscriptions):
         self.capture = self.get_stream(self.capture_tag)
         self.capture_feed = self.get_feed(self.capture_tag)
+        if self.plotter_tag in subscriptions:
+            self.plotter = subscriptions[self.plotter_tag].get_stream()
+            self.plotter.add_plots(self.trajectory_plot)
 
     def run(self):
         while self.is_running():
@@ -73,6 +83,15 @@ class Ratslam(ThreadedStream):
                     self.experience_map.get_experience_y_m(index)
                 ))
                 self.prev_time = self.dt()
+
+                if self.is_subscribed(self.plotter_tag):
+                    xs, ys = [], []
+                    for index in range(self.experience_map.get_num_experiences()):
+                        xs.append(self.experience_map.get_experience_x_m(index))
+                        ys.append(self.experience_map.get_experience_y_m(index))
+                    if len(xs) != len(ys):
+                        print(xs, ys)
+                    self.trajectory_plot.update(tuple(xs), tuple(ys))
 
     def update_exp_map(self, action):
         if action == PosecellAction.CREATE_NODE:

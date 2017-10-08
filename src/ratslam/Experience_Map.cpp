@@ -175,13 +175,7 @@ namespace ratslam
         // check if the link already exists
         for (unsigned int i = 0; i < experiences[exp_id_from].links_from.size(); i++)
         {
-            // TODO: segfaults when this is called
-            cout << "current_exp_id: " << current_exp_id << endl;
-            cout << "num experiences: " << get_num_experiences() << endl;
-            cout << "experiences: " << experiences[current_exp_id].id << endl;
-            cout << "links from: " << experiences[current_exp_id].links_from[i] << endl;
-
-            if (links[experiences[current_exp_id].links_from[i]].exp_to_id == exp_id_to) {
+            if (links[experiences[exp_id_from].links_from[i]].exp_to_id == exp_id_to) {
                 return false;
             }
         }

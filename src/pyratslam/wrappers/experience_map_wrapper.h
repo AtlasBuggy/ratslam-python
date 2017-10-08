@@ -29,6 +29,8 @@ public:
     }
     unsigned int get_current_id()  { return experience_map_instance->get_current_id(); }
 
+    int get_num_experiences()  { return experience_map_instance->get_num_experiences(); }
+
 private:
     ratslam::ExperienceMap *experience_map_instance;
 };
