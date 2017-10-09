@@ -1,6 +1,3 @@
-[general]
-topic_root=stlucia
-
 [ratslam]
 image_crop_x_min=40
 image_crop_x_max=600
@@ -38,12 +35,3 @@ camera_fov_deg=53
 camera_hz = 10
 vtrans_scaling = 1000
 vtrans_max=20
-
-[draw]
-enable=1
-vt_window_width=640
-vt_window_height=900
-exp_map_size=500
-posecells_size=250
-media_path=@MEDIA_PATH@
-image_file=irat_sm.tga

@@ -51,8 +51,6 @@ using boost::property_tree::ptree;
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/deque.hpp>
 
-using namespace std;
-
 namespace ratslam
 {
 
@@ -168,12 +166,7 @@ public:
   void add_goal(double x_m, double y_m);
   void add_goal(int id)
   {
-    //cout << " add_goal id:" << id << endl;
-    if (EXP_GOAL_FIFO) {
-      goal_list.push_back(id);
-    } else {
-      goal_list.push_front(id);
-    }
+    goal_list.push_back(id);
   }
   bool calculate_path_to_goal(double time_s);
   bool get_goal_waypoint();
@@ -187,10 +180,8 @@ public:
   }
   void delete_current_goal()
   {
-    //cout << " delete_current_goal" << endl;
     goal_list.pop_front();
   }
-  // TODO: Extension point for goal digestion reward signal ROS topic.
   bool get_goal_success()
   {
     return goal_success;
@@ -205,12 +196,8 @@ public:
 
   unsigned int get_goal_path_final_exp()
   {
-    return goal_path_final_exp_id;
+          return goal_path_final_exp_id;
   }
-
-  // calculate distance between two experiences using djikstras algorithm
-  // can be very slow for many experiences
-  double dijkstra_distance_between_experiences(int id1, int id2);
 
 
   template<typename Archive>
@@ -220,7 +207,6 @@ public:
       ar & EXP_CORRECTION;
       ar & MAX_GOALS;
       ar & EXP_INITIAL_EM_DEG;
-      ar & EXP_GOAL_FIFO;
 
       ar & experiences;
       ar & links;
@@ -237,7 +223,7 @@ public:
       ar & goal_success;
       ar & goal_timeout_s;
       ar & goal_path_final_exp_id;
-
+  	  
       ar & relative_rad;
 
     }
@@ -249,15 +235,15 @@ private:
   {
     ;
   }
+  // calculate distance between two experiences using djikstras algorithm
+  // can be very slow for many experiences
+  double dijkstra_distance_between_experiences(int id1, int id2);
 
-  // Moved to public for Distance server.
-  //double dijkstra_distance_between_experiences(int id1, int id2);
 
   int EXP_LOOPS;
   double EXP_CORRECTION;
   unsigned int MAX_GOALS;
   double EXP_INITIAL_EM_DEG;
-  bool EXP_GOAL_FIFO;
 
   std::vector<Experience> experiences;
   std::vector<Link> links;

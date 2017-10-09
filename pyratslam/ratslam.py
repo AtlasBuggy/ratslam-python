@@ -1,3 +1,4 @@
+import cv2
 from atlasbuggy import ThreadedStream
 from atlasbuggy.subscriptions import *
 from atlasbuggy.plotters import RobotPlot
@@ -24,7 +25,7 @@ class Ratslam(ThreadedStream):
         self.destination_id = None
         self.relative_rad = None
 
-        self.trajectory_plot = RobotPlot("trajectory")
+        self.trajectory_plot = RobotPlot("trajectory", linestyle='', marker='.', markersize=5)
 
         self.plotter_tag = "plotter"
         self.plotter = None
@@ -34,6 +35,9 @@ class Ratslam(ThreadedStream):
         self.capture_feed = None
         self.capture_tag = "capture"
         self.require_subscription(self.capture_tag, Update, required_attributes=("fps",))
+
+        self.experience_map.on_create_experience(0)
+        self.experience_map.on_set_experience(0, 0)
 
     def take(self, subscriptions):
         self.capture = self.get_stream(self.capture_tag)
@@ -55,61 +59,58 @@ class Ratslam(ThreadedStream):
 
                 self.lv.on_image(frame, is_color, width, height)
                 vtrans, vrot = self.odometry.on_image(frame, is_color, width, height)
-                self.logger.info("odometry: %0.4f, %0.4f" % (vtrans, vrot))
+                self.logger.debug("odometry: %0.4f, %0.4f" % (vtrans, vrot))
 
                 delta_t = self.dt() - self.prev_time
-                self.logger.info("delta t: %0.5f" % delta_t)
+                self.logger.debug("delta t: %0.5f" % delta_t)
                 self.posecells.on_odo(vtrans, vrot, delta_t)
 
                 self.posecells.on_view_template(self.lv.get_current_vt(), self.lv.get_relative_rad())
 
                 # self.logger.info(self.posecells.x(), self.posecells.y(), self.posecells.th())
                 action = self.posecells.get_action()
-                self.logger.info("posecell action: '%s'" % action)
+                self.logger.debug("posecell action: '%s'" % action)
                 self.source_id = self.posecells.get_current_exp_id()
                 if action != PosecellAction.NO_ACTION:
                     self.destination_id = self.posecells.get_current_exp_id()
                     self.relative_rad = self.posecells.get_relative_rad()
 
-                self.experience_map.on_odo(vtrans, vrot, delta_t)
+                    self.logger.debug("dest id: %s, relative rad: %s" % (self.destination_id, self.relative_rad))
 
-                self.logger.info("updating experience map...")
+                self.experience_map.on_odo(vtrans, vrot, delta_t)
                 self.update_exp_map(action)
-                self.logger.info("done")
-                
+
                 index = self.experience_map.get_current_id()
                 self.logger.info("%s\t%s" % (
                     self.experience_map.get_experience_x_m(index),
                     self.experience_map.get_experience_y_m(index)
                 ))
-                self.prev_time = self.dt()
 
                 if self.is_subscribed(self.plotter_tag):
                     xs, ys = [], []
                     for index in range(self.experience_map.get_num_experiences()):
                         xs.append(self.experience_map.get_experience_x_m(index))
                         ys.append(self.experience_map.get_experience_y_m(index))
-                    if len(xs) != len(ys):
-                        print(xs, ys)
-                    self.trajectory_plot.update(tuple(xs), tuple(ys))
+                    self.trajectory_plot.update(xs, ys)
+                self.prev_time = self.dt()
 
     def update_exp_map(self, action):
         if action == PosecellAction.CREATE_NODE:
-            self.logger.info("create experience node")
+            self.logger.debug("create experience node")
             self.experience_map.on_create_experience(self.destination_id)
-            self.logger.info("set experience node")
+            self.logger.debug("set experience node")
             self.experience_map.on_set_experience(self.destination_id, 0)
 
         elif action == PosecellAction.CREATE_EDGE:
-            self.logger.info("create experience link, %s, %s, %s" % (
+            self.logger.debug("create experience link, %s, %s, %s" % (
                 self.source_id, self.destination_id, self.relative_rad
             ))
             self.experience_map.on_create_link(self.source_id, self.destination_id, self.relative_rad)
-            self.logger.info("set experience node")
+            self.logger.debug("set experience node")
             self.experience_map.on_set_experience(self.destination_id, self.relative_rad)
 
         elif action == PosecellAction.SET_NODE:
-            self.logger.info("set experience node")
+            self.logger.debug("set experience node")
             self.experience_map.on_set_experience(self.destination_id, self.relative_rad)
 
         self.experience_map.iterate()

@@ -74,6 +74,8 @@ struct VisualTemplate
 class LocalViewMatch
 {
 public:
+  friend class LocalViewScene;
+
   LocalViewMatch(ptree settings);
 
   ~LocalViewMatch();

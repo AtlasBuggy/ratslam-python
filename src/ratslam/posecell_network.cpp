@@ -676,7 +676,7 @@ bool PosecellNetwork::set_cells(double * cells)
 double PosecellNetwork::get_delta_pc(double x, double y, double th)
 {
   double pc_th_corrected = best_th - vt_delta_pc_th;
-  if (pc_th_corrected < 0)
+  if (pc_th_corrected < 0) 
 	pc_th_corrected = PC_DIM_TH + pc_th_corrected;
   if (pc_th_corrected >= PC_DIM_TH)
 	pc_th_corrected = pc_th_corrected - PC_DIM_TH;
@@ -1049,7 +1049,7 @@ void PosecellNetwork::on_view_template(unsigned int vt, double vt_rad)
       {
 		vt_delta_pc_th = vt_rad / (2.0*M_PI) * PC_DIM_TH;
 		double pc_th_corrected = pcvt->pc_th + vt_rad / (2.0*M_PI) * PC_DIM_TH;
-		if (pc_th_corrected < 0)
+		if (pc_th_corrected < 0) 
 			pc_th_corrected = PC_DIM_TH + pc_th_corrected;
 		if (pc_th_corrected >= PC_DIM_TH)
 			pc_th_corrected = pc_th_corrected - PC_DIM_TH;
@@ -1072,3 +1072,4 @@ vt_update = true;
 }
 
 } // namespace ratslam
+

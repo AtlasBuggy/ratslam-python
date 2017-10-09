@@ -53,7 +53,7 @@ LocalViewMatch::LocalViewMatch(ptree settings)
   get_setting_from_ptree(VT_SHIFT_MATCH, settings, "vt_shift_match", 25);
   get_setting_from_ptree(VT_STEP_MATCH, settings, "vt_step_match", 5);
   get_setting_from_ptree(VT_PANORAMIC, settings, "vt_panoramic", 0);
-
+ 
   get_setting_from_ptree(VT_MATCH_THRESHOLD, settings, "vt_match_threshold", 0.03);
   get_setting_from_ptree(TEMPLATE_X_SIZE, settings, "template_x_size", 1);
   get_setting_from_ptree(TEMPLATE_Y_SIZE, settings, "template_y_size", 1);
@@ -101,14 +101,14 @@ void LocalViewMatch::on_image(const unsigned char *view_rgb, bool greyscale, uns
   if (vt_error <= VT_MATCH_THRESHOLD)
   {
     set_current_vt((int)vt_match_id);
-    // cout << "VTM[" << setw(4) << get_current_vt() << "] " << endl;
+    cout << "VTM[" << setw(4) << get_current_vt() << "] " << endl;
     cout.flush();
   }
   else
   {
     vt_relative_rad = 0;
     set_current_vt(create_template());
-    // cout << "VTN[" << setw(4) << get_current_vt() << "] " << endl;
+    cout << "VTN[" << setw(4) << get_current_vt() << "] " << endl;
     cout.flush();
   }
 
@@ -294,7 +294,7 @@ int LocalViewMatch::create_template()
   return templates.size() - 1;
 }
 
-// compare a visual template to all the stored templates, allowing for
+// compare a visual template to all the stored templates, allowing for 
 // slen pixel shifts in each direction
 // returns the matching template and the MSE
 void LocalViewMatch::compare(double &vt_err, unsigned int &vt_match_id)

@@ -10,7 +10,7 @@ height = 500
 
 
 def main():
-    robot = Robot(write=False)
+    robot = Robot(write=False, log_level=10)
 
     viewer = CameraViewer()
     video = VideoPlayer(file_name="07_39_40.mp4", width=width, height=height)
