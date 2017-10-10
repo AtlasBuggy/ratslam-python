@@ -21,6 +21,7 @@ py::tuple VisualOdometryWrapper::on_image(py::object view_rgb, py::object greysc
 
         double vtrans_ms = 0.0;
         double vrot_rads = 0.0;
+
         visual_odometry_instance->on_image(
             char_buffer, greyscale_prim, image_width_prim, image_height_prim,
             &vtrans_ms, &vrot_rads

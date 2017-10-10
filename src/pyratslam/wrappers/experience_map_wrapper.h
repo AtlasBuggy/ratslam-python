@@ -17,6 +17,8 @@ public:
 
     void iterate()  { experience_map_instance->iterate(); }
 
+    int get_num_experiences()  { return experience_map_instance->get_num_experiences(); }
+
     double get_experience_x_m(unsigned int current_id) {
         // std::cout << "x_m: " << experience_map_instance->get_experience(current_id)->x_m << endl;
         return experience_map_instance->get_experience(current_id)->x_m;
@@ -29,7 +31,16 @@ public:
     }
     unsigned int get_current_id()  { return experience_map_instance->get_current_id(); }
 
-    int get_num_experiences()  { return experience_map_instance->get_num_experiences(); }
+
+    int get_num_links()  { return experience_map_instance->get_num_links(); }
+
+    unsigned int get_link_exp_from_id(unsigned int current_id) {
+        return experience_map_instance->get_link(current_id)->exp_from_id;
+    }
+    unsigned int get_link_exp_to_id(unsigned int current_id) {
+        return experience_map_instance->get_link(current_id)->exp_to_id;
+    }
+
 
 private:
     ratslam::ExperienceMap *experience_map_instance;
