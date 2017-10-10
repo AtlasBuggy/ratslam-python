@@ -30,9 +30,9 @@ vrot_image_y_min=75
 vrot_image_y_max=240
 
 camera_fov_deg=53
-camera_hz = 10
-vtrans_scaling = 1000
-vtrans_max=20
+camera_hz = 24
+vtrans_scaling = 100
+vtrans_max=10
 
 
 [draw]

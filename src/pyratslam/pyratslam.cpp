@@ -67,5 +67,7 @@ BOOST_PYTHON_MODULE(pyratslam)
         .def("get_current_id", &ExperienceMapWrapper::get_current_id)
         .def("get_num_experiences", &ExperienceMapWrapper::get_num_experiences)
         .def("get_num_links", &ExperienceMapWrapper::get_num_links)
+        .def("get_link_exp_from_id", &ExperienceMapWrapper::get_link_exp_from_id)
+        .def("get_link_exp_to_id", &ExperienceMapWrapper::get_link_exp_to_id)
     ;
 }
