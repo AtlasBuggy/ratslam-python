@@ -10,8 +10,8 @@ def main():
     robot = Robot(write=False)
 
     viewer = CameraViewer()
-    video = VideoPlayer(file_name="irat_aus_28112011.mp4", log_level=10, width=800, height=500)
-    rat = Ratslam("config_irataus.txt", log_level=10)
+    video = VideoPlayer(file_name="07_39_40.mp4", log_level=10, width=800, height=500, )
+    rat = Ratslam("config.txt", log_level=10)
     plotter = LivePlotter(1)
 
     viewer.subscribe(Update(viewer.capture_tag, video))

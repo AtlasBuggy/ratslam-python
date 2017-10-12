@@ -31,7 +31,7 @@ class Ratslam(ThreadedStream):
         self.relative_rad = None
         self.action = PosecellAction.NO_ACTION
 
-        self.from_points = RobotPlot("from points", linestyle='', marker='o')
+        self.from_points = RobotPlot("from points", marker='o')
         self.to_points = RobotPlot("to points", linestyle='', marker='x')
         self.trajectory = RobotPlotCollection("trajectory", self.from_points, self.to_points)
 
@@ -70,6 +70,14 @@ class Ratslam(ThreadedStream):
         self.vtrans, self.vrot = self.odometry.on_image(frame, is_color, width, height)
         self.logger.debug("vtrans: %0.4f, vrot: %0.4f" % (self.vtrans, self.vrot))
 
+        # pose cell odometry callback
+        self.logger.debug("on_odo, posecells")
+        self.posecells.on_odo(self.vtrans, self.vrot, delta_t)
+
+        # odometry experience map callback
+        self.logger.debug("on_odo, experience map")
+        self.experience_map.on_odo(self.vtrans, self.vrot, delta_t)
+
         # pose cell view template callback
         self.logger.debug(
             "on view template. current_vt: %s, relative_rad: %s" % (self.lv_current_vt, self.lv_relative_rad))
@@ -80,9 +88,6 @@ class Ratslam(ThreadedStream):
         self.source_id = self.posecells.get_current_exp_id()
         self.logger.debug("posecells source id: %s" % self.source_id)
 
-        self.logger.debug("on_odo, posecells")
-        self.posecells.on_odo(self.vtrans, self.vrot, delta_t)
-
         self.action = self.posecells.get_action()
         self.logger.debug("posecell action: %s" % self.action)
 
@@ -92,10 +97,6 @@ class Ratslam(ThreadedStream):
             self.logger.debug("dest id: %s, relative rad: %s" % (self.destination_id, self.relative_rad))
             self.logger.debug("pose x: %0.4f, pose y: %0.4f, pose th: %0.4f" % (
                 self.posecells.x(), self.posecells.y(), self.posecells.th()))
-
-            # odometry experience map callback
-            self.logger.debug("on_odo, experience map")
-            self.experience_map.on_odo(self.vtrans, self.vrot, delta_t)
 
             self.action_callback()
 
@@ -167,30 +168,23 @@ class Ratslam(ThreadedStream):
                 self.prev_time = self.dt()
 
                 if self.is_subscribed(self.plotter_tag):
-                    x1s = []
-                    y1s = []
-                    x2s = []
-                    y2s = []
+                    xs = []
+                    ys = []
                     for index in range(self.experience_map.get_num_links()):
                         from_id = self.experience_map.get_link_exp_from_id(index)
                         to_id = self.experience_map.get_link_exp_to_id(index)
 
                         x1, y1 = self.exp_map_coords(from_id)
                         x2, y2 = self.exp_map_coords(to_id)
-                        x1s.append(x1)
-                        y1s.append(y1)
-                        x2s.append(x2)
-                        y2s.append(y2)
+                        xs.append(x1)
+                        ys.append(y1)
+                        xs.append(x2)
+                        ys.append(y2)
 
-                    if len(x1s) != len(y1s):
-                        print(x1s, y1s)
+                    if len(xs) != len(ys):
+                        print(xs, ys)
                     else:
-                        self.from_points.update(x1s, y1s)
-
-                    if len(x2s) != len(y2s):
-                        print(x2s, y2s)
-                    else:
-                        self.to_points.update(x2s, y2s)
+                        self.from_points.update(xs, ys)
 
     def stop(self):
         output = ""
