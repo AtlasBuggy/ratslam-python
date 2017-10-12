@@ -26,6 +26,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <vector>
 #include <boost/property_tree/ini_parser.hpp>
 using boost::property_tree::ptree;
 

@@ -2,7 +2,7 @@ import numpy as np
 
 from pyratslam import Ptree, LocalViewMatch
 
-ptree = Ptree("config_irataus.txt.in")
+ptree = Ptree("config_irataus.txt")
 ratslam_settings = ptree.get_child("ratslam")
 
 lv = LocalViewMatch(ratslam_settings)
